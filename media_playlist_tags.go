@@ -22,6 +22,13 @@ func (tags MediaPlaylistTags) Set(tag *Tag) {
 	tags.Raw().Set(tag)
 }
 
+// Remove removes the tag.
+// If the tag does not exist, it will do nothing.
+// If the tag exists multiple times, all of them will be removed.
+func (tags MediaPlaylistTags) Remove(name string) {
+	tags.Raw().Remove(name)
+}
+
 // Version returns the value of the EXT-X-VERSION tag.
 func (tags MediaPlaylistTags) Version() int {
 	values, ok := tags[TagExtXVersion]

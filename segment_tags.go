@@ -20,6 +20,13 @@ func (tags SegmentTags) Set(tag *Tag) {
 	tags.Raw().Set(tag)
 }
 
+// Remove removes the tag.
+// If the tag does not exist, it will do nothing.
+// If the tag exists multiple times, all of them will be removed.
+func (tags SegmentTags) Remove(name string) {
+	tags.Raw().Remove(name)
+}
+
 // ProgramDateTime returns the value of the EXT-X-PROGRAM-DATE-TIME tag.
 func (tags SegmentTags) ProgramDateTime() (time.Time, bool) {
 	values, ok := tags[TagExtXProgramDateTime]
@@ -60,4 +67,18 @@ func (tags SegmentTags) ExtInfValue() float64 {
 // SetExtInfValue sets the value of the EXTINF tag.
 func (tags SegmentTags) SetExtInfValue(duration float64, bitSize int) {
 	tags[TagExtInf] = []string{strconv.FormatFloat(duration, 'f', -1, bitSize) + ","}
+}
+
+// DateRange returns the attributes list of the EXT-X-DATERANGE tags.
+func (tags SegmentTags) DateRange() []DateRangeAttrs {
+	values := tags[TagExtXDateRange]
+	list := make([]DateRangeAttrs, 0, len(values))
+	for _, value := range values {
+		attrs, err := ParseTagAttributes(value)
+		if err != nil {
+			continue
+		}
+		list = append(list, DateRangeAttrs(attrs))
+	}
+	return list
 }

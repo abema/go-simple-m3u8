@@ -63,7 +63,7 @@ func TestTags(t *testing.T) {
 		"EXT-X-FOO": []string{"foo"},
 		"EXT-X-BAR": []string{"bar"},
 	}, tags)
-	tags.RemoveByName("EXT-X-FOO")
+	tags.Remove("EXT-X-FOO")
 	assert.Equal(t, Tags{"EXT-X-BAR": []string{"bar"}}, tags)
 	tags.Add(&Tag{Name: "EXT-X-BAR", Attributes: "bar2"})
 	assert.Equal(t, Tags{"EXT-X-BAR": []string{"bar", "bar2"}}, tags)

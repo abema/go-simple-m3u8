@@ -252,7 +252,7 @@ func (tags Tags) Add(tag *Tag) {
 // Remove removes the tag.
 // If the tag does not exist, it will do nothing.
 // If the tag exists multiple times, all of them will be removed.
-func (tags Tags) RemoveByName(name string) {
+func (tags Tags) Remove(name string) {
 	delete(tags, name)
 }
 
