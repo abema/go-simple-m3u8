@@ -1,0 +1,29 @@
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        go-version: [ "1.21", "1.22", ">=1.23" ]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-go@v3
+      with:
+        go-version: ${{ matrix.go-version }}
+        check-latest: true
+    - run: go vet ./...
+    - run: go test "-coverprofile=coverage.txt" -covermode=atomic ./...
+    - name: Upload Coverage Report
+      if: ${{ github.event_name == 'push' && matrix.go-version == '1.22' }}
+      env:
+        COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+      run: |
+        go install github.com/mattn/goveralls@latest
+        goveralls -coverprofile=coverage.txt
