@@ -1,6 +1,6 @@
 module github.com/abema/go-simple-m3u8
 
-go 1.23.2
+go 1.21
 
 require github.com/stretchr/testify v1.10.0
 
