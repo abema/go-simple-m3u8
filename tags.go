@@ -102,6 +102,23 @@ func getTagOrder(name string) int {
 	return math.MaxInt
 }
 
+var masterPlaylistTagSet = map[string]struct{}{
+	TagExtXMedia:           {},
+	TagExtXStreamInf:       {},
+	TagExtXIFrameStreamInf: {},
+	TagExtXSessionData:     {},
+	TagExtXSessionKey:      {},
+}
+
+var mediaPlaylistTagSet = map[string]struct{}{
+	TagExtXTargetDuration:        {},
+	TagExtXPlaylistType:          {},
+	TagExtXIFramesOnly:           {},
+	TagExtXMediaSequence:         {},
+	TagExtXDiscontinuitySequence: {},
+	TagExtXEndlist:               {},
+}
+
 var segmentTagSet = map[string]struct{}{
 	TagExtInf:              {},
 	TagExtXByteRange:       {},
@@ -143,10 +160,20 @@ func AttributeString(line string) string {
 	return line[idx+1:]
 }
 
+func isMasterPlaylistTag(name string) bool {
+	_, ok := masterPlaylistTagSet[name]
+	return ok
+}
+
+func isMediaPlaylistTag(name string) bool {
+	_, ok := mediaPlaylistTagSet[name]
+	return ok
+}
+
 // IsSegmentTagName returns true if the name is a segment tag name.
 func IsSegmentTagName(name string) bool {
-	_, t := segmentTagSet[name]
-	return t
+	_, ok := segmentTagSet[name]
+	return ok
 }
 
 // Attributes represents a set of attributes of a tag.

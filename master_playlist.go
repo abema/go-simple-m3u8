@@ -133,3 +133,20 @@ func (playlist *MasterPlaylist) Encode(w io.Writer) error {
 	}
 	return nil
 }
+
+// Type returns the type of the playlist.
+func (playlist *MasterPlaylist) Type() PlaylistType {
+	return PlaylistTypeMaster
+}
+
+// Master returns the master playlist.
+// If the playlist is not a master playlist, it returns nil.
+func (playlist *MasterPlaylist) Master() *MasterPlaylist {
+	return playlist
+}
+
+// Media returns the media playlist.
+// If the playlist is not a media playlist, it returns nil.
+func (playlist *MasterPlaylist) Media() *MediaPlaylist {
+	return nil
+}
