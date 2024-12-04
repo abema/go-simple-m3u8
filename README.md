@@ -9,3 +9,5 @@
 go-simple-m3u8 is a Go library for encoding and decoding M3U8 files.
 This library retains all tags and their attributes using a map, ensuring that no tags are lost even if they are not explicitly supported.
 While useful methods are provided, you can access all tags and attributes by their names if needed.
+
+[Examples](./examples)
