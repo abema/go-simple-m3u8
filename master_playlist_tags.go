@@ -10,10 +10,10 @@ import (
 type MediaType string
 
 const (
-	MediaTypeAudio          = "AUDIO"
-	MediaTypeVideo          = "VIDEO"
-	MediaTypeSubtitles      = "SUBTITLES"
-	MediaTypeClosedCaptions = "CLOSED-CAPTIONS"
+	MediaTypeAudio          MediaType = "AUDIO"
+	MediaTypeVideo          MediaType = "VIDEO"
+	MediaTypeSubtitles      MediaType = "SUBTITLES"
+	MediaTypeClosedCaptions MediaType = "CLOSED-CAPTIONS"
 )
 
 // StreamInfAttrs represents the attributes of the EXT-X-STREAM-INF tag.

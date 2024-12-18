@@ -13,19 +13,36 @@ func TestMediaPlaylistTags(t *testing.T) {
 		tags := MediaPlaylistTags{
 			"EXT-X-VERSION":                []string{"4"},
 			"EXT-X-TARGETDURATION":         []string{"12"},
+			"EXT-X-PLAYLIST-TYPE":          []string{"VOD"},
 			"EXT-X-MEDIA-SEQUENCE":         []string{"12345"},
 			"EXT-X-DISCONTINUITY-SEQUENCE": []string{"123"},
 		}
 		assert.Equal(t, int(4), tags.Version())
 		assert.Equal(t, 12, tags.TargetDuration())
+		assert.Equal(t, MediaPlaylistTypeVOD, tags.PlaylistType())
 		assert.Equal(t, int64(12345), tags.MediaSequence())
 		assert.Equal(t, int64(123), tags.DiscontinuitySequence())
 	})
 
 	t.Run("setters", func(t *testing.T) {
 		tags := make(MediaPlaylistTags)
+		tags.SetPlaylistType(MediaPlaylistTypeEvent)
 		tags.SetMediaSequence(12345)
 		tags.SetDiscontinuitySequence(123)
+		assert.Equal(t, MediaPlaylistTags{
+			"EXT-X-PLAYLIST-TYPE":          []string{"EVENT"},
+			"EXT-X-MEDIA-SEQUENCE":         []string{"12345"},
+			"EXT-X-DISCONTINUITY-SEQUENCE": []string{"123"},
+		}, tags)
+	})
+
+	t.Run("removers", func(t *testing.T) {
+		tags := MediaPlaylistTags{
+			"EXT-X-PLAYLIST-TYPE":          []string{"EVENT"},
+			"EXT-X-MEDIA-SEQUENCE":         []string{"12345"},
+			"EXT-X-DISCONTINUITY-SEQUENCE": []string{"123"},
+		}
+		tags.RemovePlaylistType()
 		assert.Equal(t, MediaPlaylistTags{
 			"EXT-X-MEDIA-SEQUENCE":         []string{"12345"},
 			"EXT-X-DISCONTINUITY-SEQUENCE": []string{"123"},

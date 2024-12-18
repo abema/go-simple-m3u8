@@ -8,6 +8,13 @@ import (
 	"time"
 )
 
+type MediaPlaylistType string
+
+const (
+	MediaPlaylistTypeEvent MediaPlaylistType = "EVENT"
+	MediaPlaylistTypeVOD   MediaPlaylistType = "VOD"
+)
+
 // MediaPlaylistTags represents the tags of a media playlist.
 type MediaPlaylistTags Tags
 
@@ -55,6 +62,30 @@ func (tags MediaPlaylistTags) TargetDuration() int {
 		return 0
 	}
 	return duration
+}
+
+// SetTargetDuration sets the value of the EXT-X-TARGETDURATION tag.
+func (tags MediaPlaylistTags) SetTargetDuration(duration int) {
+	tags[TagExtXTargetDuration] = []string{strconv.Itoa(duration)}
+}
+
+// PlaylistType returns the value of the EXT-X-PLAYLIST-TYPE tag.
+func (tags MediaPlaylistTags) PlaylistType() MediaPlaylistType {
+	values, ok := tags[TagExtXPlaylistType]
+	if !ok || len(values) == 0 {
+		return ""
+	}
+	return MediaPlaylistType(values[0])
+}
+
+// SetPlaylistType sets the value of the EXT-X-PLAYLIST-TYPE tag.
+func (tags MediaPlaylistTags) SetPlaylistType(playlistType MediaPlaylistType) {
+	tags[TagExtXPlaylistType] = []string{string(playlistType)}
+}
+
+// RemovePlaylistType removes the EXT-X-PLAYLIST-TYPE tag.
+func (tags MediaPlaylistTags) RemovePlaylistType() {
+	delete(tags, TagExtXPlaylistType)
 }
 
 // MediaSequence returns the value of the EXT-X-MEDIA-SEQUENCE tag.
