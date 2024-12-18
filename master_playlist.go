@@ -99,8 +99,6 @@ func DecodeMasterPlaylist(r io.Reader) (*MasterPlaylist, error) {
 				return nil, errors.New("missing GROUP-ID")
 			}
 			typ := attrs["TYPE"]
-			delete(attrs, "GROUP-ID")
-			delete(attrs, "TYPE")
 			switch MediaType(typ) {
 			case MediaTypeVideo:
 				if _, ok := playlist.Alternatives.Video[groupID]; !ok {
@@ -196,7 +194,13 @@ func (playlist *MasterPlaylist) Encode(w io.Writer) error {
 }
 
 func encodeExtXMedia(w io.Writer, typ MediaType, groupID string, attrs MediaAttrs) error {
-	_, err := fmt.Fprintf(w, "#%s:TYPE=%s,GROUP-ID=\"%s\",%s\n", TagExtXMedia, typ, groupID, Attributes(attrs).String())
+	a := make(Attributes, len(attrs)-2)
+	for k, v := range attrs {
+		if k != "TYPE" && k != "GROUP-ID" {
+			a[k] = v
+		}
+	}
+	_, err := fmt.Fprintf(w, "#%s:TYPE=%s,GROUP-ID=\"%s\",%s\n", TagExtXMedia, typ, groupID, a.String())
 	return err
 }
 
