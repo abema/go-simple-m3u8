@@ -52,8 +52,8 @@ high-video.m3u8
 `
 
 const sampleAlternativeStreamOutput = `#EXTM3U
-#EXT-X-MEDIA:GROUP-ID="aac",AUTOSELECT=YES,DEFAULT=YES,LANGUAGE="en",NAME="English",TYPE=AUDIO,URI="main/english-audio.m3u8"
-#EXT-X-MEDIA:GROUP-ID="aac",AUTOSELECT=YES,DEFAULT=NO,LANGUAGE="de",NAME="Deutsch",TYPE=AUDIO,URI="main/german-audio.m3u8"
+#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="aac",AUTOSELECT=YES,DEFAULT=YES,LANGUAGE="en",NAME="English",URI="main/english-audio.m3u8"
+#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="aac",AUTOSELECT=YES,DEFAULT=NO,LANGUAGE="de",NAME="Deutsch",URI="main/german-audio.m3u8"
 #EXT-X-STREAM-INF:AUDIO="aac",BANDWIDTH=1280000,CODECS="avc1.4d401e"
 low-video.m3u8
 #EXT-X-STREAM-INF:AUDIO="aac",BANDWIDTH=2560000,CODECS="avc1.4d401e"

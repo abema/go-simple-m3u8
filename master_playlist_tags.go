@@ -124,16 +124,6 @@ func (attrs StreamInfAttrs) SetClosedCaptions(closedCaptions string) {
 // MediaAttrs represents the attributes of the EXT-X-MEDIA tag.
 type MediaAttrs Attributes
 
-// Type returns the type of the media.
-func (attrs MediaAttrs) Type() MediaType {
-	return MediaType(attrs["TYPE"])
-}
-
-// SetType sets the type of the media.
-func (attrs MediaAttrs) SetType(mediaType MediaType) {
-	attrs["TYPE"] = string(mediaType)
-}
-
 // URI returns the URI of the media.
 func (attrs MediaAttrs) URI() string {
 	return strings.Trim(attrs["URI"], `"`)
@@ -142,16 +132,6 @@ func (attrs MediaAttrs) URI() string {
 // SetURI sets the URI of the media.
 func (attrs MediaAttrs) SetURI(uri string) {
 	attrs["URI"] = `"` + uri + `"`
-}
-
-// GroupID returns the group ID of the media.
-func (attrs MediaAttrs) GroupID() string {
-	return strings.Trim(attrs["GROUP-ID"], `"`)
-}
-
-// SetGroupID sets the group ID of the media.
-func (attrs MediaAttrs) SetGroupID(groupID string) {
-	attrs["GROUP-ID"] = `"` + groupID + `"`
 }
 
 // Language returns the language of the media.

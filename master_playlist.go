@@ -17,8 +17,8 @@ type MasterPlaylist struct {
 	// Streams is a list of variant streams.
 	Streams []*Stream
 
-	// Alternatives is a list of alternative renditions.
-	Alternatives map[string][]*Alternative
+	// Alternatives contains alternative renditions.
+	Alternatives Alternatives
 
 	// IFrameStreams is a list of I-frame streams.
 	IFrameStreams []*Stream
@@ -33,6 +33,13 @@ type Stream struct {
 	URI string
 }
 
+type Alternatives struct {
+	Video          map[string][]*Alternative
+	Audio          map[string][]*Alternative
+	Subtitles      map[string][]*Alternative
+	ClosedCaptions map[string][]*Alternative
+}
+
 type Alternative struct {
 	// Attributes is a list of attributes in the alternative.
 	Attributes MediaAttrs
@@ -44,7 +51,12 @@ func DecodeMasterPlaylist(r io.Reader) (*MasterPlaylist, error) {
 	var playlist MasterPlaylist
 	playlist.Tags = make(Tags)
 	playlist.Streams = make([]*Stream, 0)
-	playlist.Alternatives = make(map[string][]*Alternative)
+	playlist.Alternatives = Alternatives{
+		Video:          make(map[string][]*Alternative),
+		Audio:          make(map[string][]*Alternative),
+		Subtitles:      make(map[string][]*Alternative),
+		ClosedCaptions: make(map[string][]*Alternative),
+	}
 	var streamInfAttrs StreamInfAttrs
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -82,17 +94,45 @@ func DecodeMasterPlaylist(r io.Reader) (*MasterPlaylist, error) {
 			if err != nil {
 				return nil, err
 			}
-			groupID, ok := attrs["GROUP-ID"]
-			if !ok {
+			groupID := strings.Trim(attrs["GROUP-ID"], `"`)
+			if groupID == "" {
 				return nil, errors.New("missing GROUP-ID")
 			}
+			typ := attrs["TYPE"]
 			delete(attrs, "GROUP-ID")
-			if _, ok := playlist.Alternatives[groupID]; !ok {
-				playlist.Alternatives[groupID] = make([]*Alternative, 0)
+			delete(attrs, "TYPE")
+			switch MediaType(typ) {
+			case MediaTypeVideo:
+				if _, ok := playlist.Alternatives.Video[groupID]; !ok {
+					playlist.Alternatives.Video[groupID] = make([]*Alternative, 0)
+				}
+				playlist.Alternatives.Video[groupID] = append(playlist.Alternatives.Video[groupID], &Alternative{
+					Attributes: MediaAttrs(attrs),
+				})
+			case MediaTypeAudio:
+				if _, ok := playlist.Alternatives.Audio[groupID]; !ok {
+					playlist.Alternatives.Audio[groupID] = make([]*Alternative, 0)
+				}
+				playlist.Alternatives.Audio[groupID] = append(playlist.Alternatives.Audio[groupID], &Alternative{
+					Attributes: MediaAttrs(attrs),
+				})
+			case MediaTypeSubtitles:
+				if _, ok := playlist.Alternatives.Subtitles[groupID]; !ok {
+					playlist.Alternatives.Subtitles[groupID] = make([]*Alternative, 0)
+				}
+				playlist.Alternatives.Subtitles[groupID] = append(playlist.Alternatives.Subtitles[groupID], &Alternative{
+					Attributes: MediaAttrs(attrs),
+				})
+			case MediaTypeClosedCaptions:
+				if _, ok := playlist.Alternatives.ClosedCaptions[groupID]; !ok {
+					playlist.Alternatives.ClosedCaptions[groupID] = make([]*Alternative, 0)
+				}
+				playlist.Alternatives.ClosedCaptions[groupID] = append(playlist.Alternatives.ClosedCaptions[groupID], &Alternative{
+					Attributes: MediaAttrs(attrs),
+				})
+			default:
+				return nil, errors.New("invalid TYPE")
 			}
-			playlist.Alternatives[groupID] = append(playlist.Alternatives[groupID], &Alternative{
-				Attributes: MediaAttrs(attrs),
-			})
 		} else if tagName != "" {
 			playlist.Tags.Add(&Tag{
 				Name:       tagName,
@@ -111,9 +151,30 @@ func (playlist *MasterPlaylist) Encode(w io.Writer) error {
 			return err
 		}
 	}
-	for groupID, alternatives := range playlist.Alternatives {
+	for groupID, alternatives := range playlist.Alternatives.Video {
 		for _, alt := range alternatives {
-			if _, err := fmt.Fprintf(w, "#%s:GROUP-ID=%s,%s\n", TagExtXMedia, groupID, Attributes(alt.Attributes).String()); err != nil {
+			if err := encodeExtXMedia(w, MediaTypeVideo, groupID, alt.Attributes); err != nil {
+				return err
+			}
+		}
+	}
+	for groupID, alternatives := range playlist.Alternatives.Audio {
+		for _, alt := range alternatives {
+			if err := encodeExtXMedia(w, MediaTypeAudio, groupID, alt.Attributes); err != nil {
+				return err
+			}
+		}
+	}
+	for groupID, alternatives := range playlist.Alternatives.Subtitles {
+		for _, alt := range alternatives {
+			if err := encodeExtXMedia(w, MediaTypeSubtitles, groupID, alt.Attributes); err != nil {
+				return err
+			}
+		}
+	}
+	for groupID, alternatives := range playlist.Alternatives.ClosedCaptions {
+		for _, alt := range alternatives {
+			if err := encodeExtXMedia(w, MediaTypeClosedCaptions, groupID, alt.Attributes); err != nil {
 				return err
 			}
 		}
@@ -132,6 +193,11 @@ func (playlist *MasterPlaylist) Encode(w io.Writer) error {
 		}
 	}
 	return nil
+}
+
+func encodeExtXMedia(w io.Writer, typ MediaType, groupID string, attrs MediaAttrs) error {
+	_, err := fmt.Fprintf(w, "#%s:TYPE=%s,GROUP-ID=\"%s\",%s\n", TagExtXMedia, typ, groupID, Attributes(attrs).String())
+	return err
 }
 
 // Type returns the type of the playlist.
