@@ -23,6 +23,16 @@ func (tags MediaPlaylistTags) Raw() Tags {
 	return Tags(tags)
 }
 
+// First returns the first tag of the name.
+func (tags MediaPlaylistTags) First(name string) *Tag {
+	return tags.Raw().First(name)
+}
+
+// Last returns the last tag of the name.
+func (tags MediaPlaylistTags) Last(name string) *Tag {
+	return tags.Raw().Last(name)
+}
+
 // Set sets the tag.
 // If the tag already exists, it will be overwritten.
 func (tags MediaPlaylistTags) Set(tag *Tag) {
