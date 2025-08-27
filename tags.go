@@ -45,12 +45,13 @@ const (
 	TagExtXDateRange       = "EXT-X-DATERANGE"
 
 	// Cue
-	TagExtXSCTE35     = "EXT-OATCLS-SCTE35"
-	TagExtXAsset      = "EXT-X-ASSET"
-	TagExtXCueOut     = "EXT-X-CUE-OUT"
-	TagExtXCueOutCont = "EXT-X-CUE-OUT-CONT"
-	TagExtXCueIn      = "EXT-X-CUE-IN"
-	TagExtXBlackout   = "EXT-X-BLACKOUT"
+	TagExtOATCLSSCTE35 = "EXT-OATCLS-SCTE35"
+	TagExtXSCTE35      = "EXT-OATCLS-SCTE35" // Deprecated: use TagExtOATCLSSCTE35 instead
+	TagExtXAsset       = "EXT-X-ASSET"
+	TagExtXCueOut      = "EXT-X-CUE-OUT"
+	TagExtXCueOutCont  = "EXT-X-CUE-OUT-CONT"
+	TagExtXCueIn       = "EXT-X-CUE-IN"
+	TagExtXBlackout    = "EXT-X-BLACKOUT"
 )
 
 var tagOrderMap = map[string]int{
@@ -71,12 +72,12 @@ var tagOrderMap = map[string]int{
 	TagExtXStart:               201,
 
 	// Cue
-	TagExtXCueIn:      300,
-	TagExtXSCTE35:     301,
-	TagExtXAsset:      302,
-	TagExtXCueOut:     303,
-	TagExtXCueOutCont: 304,
-	TagExtXBlackout:   305,
+	TagExtXCueIn:       300,
+	TagExtOATCLSSCTE35: 301,
+	TagExtXAsset:       302,
+	TagExtXCueOut:      303,
+	TagExtXCueOutCont:  304,
+	TagExtXBlackout:    305,
 
 	// Segment Tags
 	TagExtXDiscontinuity:   400,
@@ -127,7 +128,7 @@ var segmentTagSet = map[string]struct{}{
 	TagExtXMap:             {},
 	TagExtXProgramDateTime: {},
 	TagExtXDateRange:       {},
-	TagExtXSCTE35:          {},
+	TagExtOATCLSSCTE35:     {},
 	TagExtXAsset:           {},
 	TagExtXCueOut:          {},
 	TagExtXCueOutCont:      {},
